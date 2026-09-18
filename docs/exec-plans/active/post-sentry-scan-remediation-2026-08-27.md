@@ -1,8 +1,8 @@
 # 2026-08-27 Sentry 生产问题修复闭环
 
 > 创建时间：2026-08-27
-> 最后更新：2026-09-07
-> 当前状态：🟡 原修复已随 `v0.67.11` Shipped；09-07 Claude review follow-up 达到 Code complete + Tests pass（5555 pass / 1 skip、UI 5/5），新增改动待独立复审，尚未提交/发布；初始 DB 空读与 Windows EOF 仍开放，不代表生产问题已关闭
+> 最后更新：2026-09-18
+> 当前状态：Shipped — 原修复随 v0.67.11，保存失败/快捷建议及后续修复随 v0.67.16 发布；最终全量 5584 pass / 1 skip、保存提示 UI 5/5；初始 DB 空读、Windows EOF 与生产停增验证仍开放。
 
 ## 状态
 
@@ -222,3 +222,7 @@ Signal：用户回传 Claude `Review passed with findings`，独立 full 5553 pa
 验证边界：Claude 原审查适用于 R1–R3 之前的 diff；本次 follow-up 尚待独立复审。UI `/api/chat` 仍由 mock SSE 提供，真实 Next Response/取消链、Windows packaged 故障、生产事件停增仍未验证；没有将这些缺口标记完成。初始 DB 空读、write EOF 写入端与辅助 Provider upstream 原因继续开放。
 
 最终验证（2026-09-07，工作区未提交）：清理临时 tsconfig 后 `npm run test` EXIT=0，5556 tests / 5555 pass / 1 existing skip / 0 fail，typecheck + harness boundary 通过（`/tmp/codepilot-review-full-final.log`）；targeted 33/33，UI 5/5。R1/R2/R3 的实现、验证和 guardrail 已完成；没有执行 commit、push、tag 或发布。
+
+## v0.67.16 发布回写（2026-09-18）
+
+保存失败提示、持久化结果与后台处理解耦、正文保留及快捷建议退避随 `17c716c6` / `v0.67.16` Shipped。发版全量 5584 pass / 1 skip；隔离保存提示 UI 5/5（25.9s）；[正式 CI](https://github.com/op7418/CodePilot/actions/runs/35357476827) 与 [公开 Release](https://github.com/op7418/CodePilot/releases/tag/v0.67.16) 20 资产核验通过。没有修改外部 Sentry Issue 状态，也没有把初始 DB 空读或 Windows EOF 根因标成已解决；生产事件停增尚未观察。完整发布证据见 Gemini Native 计划的 v0.67.16 记录。
